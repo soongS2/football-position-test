@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미식축구 포지션 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .options {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-image {
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>어떤 미식축구 포지션이 나에게 맞을까?</h1>
+        <div id="test-area">
+            <p class="question" id="question"></p>
+            <div class="options">
+                <button onclick="selectOption('A')">예</button>
+                <button onclick="selectOption('B')">아니오</button>
+            </div>
+        </div>
+        <div id="result-area" style="display: none;">
+            <h2>당신의 최적의 포지션:</h2>
+            <p id="result"></p>
+            <img id="result-image" class="result-image" src="" alt="" />
+            <button onclick="restartTest()">다시 시작</button>
+        </div>
+    </div>
+    <script>
+        // 질문 목록
+        const questions = [
+            { text: "압박 속에서 결정을 내리고 리더십을 발휘하는 것을 즐기나요?", type: "QB" },
+            { text: "빠르고 민첩하며 날카로운 회전을 할 수 있나요?", type: "RB" },
+            { text: "패스를 잡기에 적합한 키가 크고 날씬한 몸매를 가지고 있나요?", type: "WR" },
+            { text: "강하고 힘이 세며 상대방을 막을 수 있나요?", type: "OL" },
+            { text: "상대팀의 선수를 뚫고 수비를 지배할 수 있는 능력이 있나요?", type: "DL" },
+            { text: "경기를 읽고 빠르게 반응해 수비를 이끌 수 있나요?", type: "LB" },
+            { text: "힘과 민첩성을 모두 갖춘 블록과 패스 캐치가 가능한 포지션인가요?", type: "TE" },
+            { text: "빠르고 민첩하며, 상대팀이 공을 잡는 것을 막는 걸 잘할 자신이 있나요?", type: "CB" },
+            { text: "몸집이 크고 근육이 많은 편인가요?", type: "OL DL" },
+            { text: "속도가 중요한 포지션을 선호하고, 힘보다는 속도를 중요시 하나요?", type: "WR RB CB" },
+        ];
+
+        let currentQuestion = 0;
+        let scores = {
+            QB: 0, RB: 0, WR: 0, OL: 0, DL: 0, LB: 0, TE: 0, CB: 0
+        };
+
+        function loadQuestion() {
+            if (currentQuestion < questions.length) {
+                document.getElementById("question").innerText = questions[currentQuestion].text;
+            } else {
+                calculateResult();
+            }
+        }
+
+        function selectOption(choice) {
+            const question = questions[currentQuestion];
+            const types = question.type.split(" ");
+            types.forEach(type => {
+                scores[type] += choice === "A" ? 1 : 0; // "A"에 점수 추가
+            });
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function calculateResult() {
+            document.getElementById("test-area").style.display = "none";
+            document.getElementById("result-area").style.display = "block";
+            let maxScore = 0;
+            let bestPosition = "";
+            for (const [position, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestPosition = position;
+                }
+            }
+
+            const positionDescriptions = {
+                QB: "쿼터백: 압박 속에서도 자연스럽게 리더십을 발휘하는 사람!",
+                RB: "러닝백: 빠르고 민첩하며 플레이를 즐기는 선수.",
+                WR: "와이드 리시버: 키가 크고 빠르며 패스를 잘 잡는 선수.",
+                OL: "오펜시브 라인: 강하고 믿음직스럽게 팀을 보호하는 역할.",
+                DL: "디펜시브 라인: 강력하고 결단력 있게 수비를 이끄는 선수.",
+                LB: "라인백커: 전략적이고 빠르게 반응하며 수비를 이끄는 선수.",
+                TE: "타이트 엔드: 블록과 패스를 모두 잘하는 다재다능한 선수.",
+                CB: "코너백: 빠르고 민첩하며 뛰어난 수비 능력을 갖춘 선수."
+            };
+
+            const positionImages = {
+                QB: "https://cdn.shopify.com/s/files/1/0521/8844/6874/files/What_is_a_Quarterback_in_Football.png?v=1651688407",
+                RB: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fblog.naver.com%2Fsonicjk82%2F220331033296%3FviewType%3Dpc&psig=AOvVaw2Qsoe0D_UE9o_LQZsGv-WB&ust=1735552789460000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMjcqo7czIoDFQAAAAAdAAAAABAE",
+                WR: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fko.wikipedia.org%2Fwiki%2F%25ED%2581%25AC%25EB%25A6%25AC%25EC%258A%25A4_%25ED%2597%25A8%25EB%25A6%25AC_%2528%25EC%2599%2580%25EC%259D%25B4%25EB%2593%259C_%25EB%25A6%25AC%25EC%258B%259C%25EB%25B2%2584%2529&psig=AOvVaw0fl4XYJm_4Q9WQnmarROEp&ust=1735552544432000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCNjXhJnbzIoDFQAAAAAdAAAAABAS",
+                OL: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fkr%2F%25EC%259D%25B4%25EB%25AF%25B8%25EC%25A7%2580%2F%25EB%25AF%25B8%25EC%258B%259D%25EC%25B6%2595%25EA%25B5%25AC-%25EB%259D%25BC%25EC%259D%25B8%25EB%25A7%25A8&psig=AOvVaw2S2HPmHp_eVek-NMePrQML&ust=1735552603379000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCIjjobbbzIoDFQAAAAAdAAAAABAE",
+                DL: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fkr%2F%25EC%259D%25B4%25EB%25AF%25B8%25EC%25A7%2580%2F%25EB%25AF%25B8%25EC%258B%259D%25EC%25B6%2595%25EA%25B5%25AC-%25EB%259D%25BC%25EC%259D%25B8%25EB%25A7%25A8&psig=AOvVaw2S2HPmHp_eVek-NMePrQML&ust=1735552603379000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCIjjobbbzIoDFQAAAAAdAAAAABAE",
+                LB: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fnews.kbs.co.kr%2Fnews%2Fview.do%3Fncd%3D3229297&psig=AOvVaw2NewyqOwHyNFF2dNx4VXAr&ust=1735552638351000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJDinMrbzIoDFQAAAAAdAAAAABAE",
+                TE: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fblog.naver.com%2Fwiden27%2F222636384593&psig=AOvVaw1xEummo8m9wy-DUePFB45F&ust=1735552665779000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLjEydTbzIoDFQAAAAAdAAAAABAJ",
+                CB: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fblog.naver.com%2Fsonicjk82%2F220394486878&psig=AOvVaw1F2qF9yAH_dXFxHyTfsAzr&ust=1735552714372000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMDkp-7bzIoDFQAAAAAdAAAAABAE"
+            };
+
+            document.getElementById("result").innerText = positionDescriptions[bestPosition];
+            document.getElementById("result-image").src = positionImages[bestPosition];
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            scores = {
+                QB: 0, RB: 0, WR: 0, OL: 0, DL: 0, LB: 0, TE: 0, CB: 0
+            };
+            document.getElementById("test-area").style.display = "block";
+            document.getElementById("result-area").style.display = "none";
+            loadQuestion();
+        }
+
+        // 초기 질문 로드
+        loadQuestion();
+    </script>
+</body>
+</html>
+
+
